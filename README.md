@@ -80,6 +80,8 @@ $ ffmpeg -buildconf
 
 **Bruno Celeste**
 
-* http://coconut.co
-* bruno@coconut.co
-* [@sadikzzz](http://twitter.com/sadikzzz)
+http://coconut.co
+
+[@OpenCoconut](http://twitter.com/OpenCoconut)
+
+You can contact me directly on Twitter [@brunoceleste](http://twitter.com/brunoceleste)
