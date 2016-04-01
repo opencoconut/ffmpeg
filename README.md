@@ -2,7 +2,7 @@
 
 The image is only **106.7 MB** versus ~350 MB.
 
-Current FFmpeg version: `3.0`
+Current FFmpeg version: `3.0.1`
 
 ## FFmpeg Build Configuration
 

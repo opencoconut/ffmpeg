@@ -1,7 +1,7 @@
 FROM gliderlabs/alpine:3.3
 MAINTAINER Bruno Celeste <bruno@coconut.co>
 
-ENV FFMPEG_VERSION=3.0
+ENV FFMPEG_VERSION=3.0.1
 
 WORKDIR /tmp/ffmpeg
 
