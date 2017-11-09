@@ -14,9 +14,7 @@ RUN echo '@testing http://nl.alpinelinux.org/alpine/edge/testing' >> /etc/apk/re
 #install dependencies
 RUN apk add --update build-base curl nasm tar bzip2 \
   zlib-dev yasm-dev lame-dev libogg-dev x264-dev libvpx-dev libvorbis-dev x265-dev freetype-dev libass-dev libwebp-dev rtmpdump-dev libtheora-dev opus-dev fdk-aac-dev@testing && \
-
   DIR=$(mktemp -d) && cd ${DIR} && \
-
   curl -s http://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz | tar zxvf - -C . && \
   cd ffmpeg-${FFMPEG_VERSION} && \
   ./configure \
@@ -24,7 +22,6 @@ RUN apk add --update build-base curl nasm tar bzip2 \
   make && \
   make install && \
   make distclean && \
-
   rm -rf ${DIR} && \
   apk del build-base curl tar bzip2 x264 openssl nasm && rm -rf /var/cache/apk/*
 
