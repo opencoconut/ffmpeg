@@ -1,15 +1,18 @@
 FROM alpine:3.6
 MAINTAINER Paulo Costa <paulo.costa@fccn.pt>
 
-#--removed openssl, added libfdk_aac, updated ffmpeg version to 3.3.2
+#--removed openssl, added libfdk_aac, updated ffmpeg version to 3.4.2
 
-ENV FFMPEG_VERSION=3.3.2
+ENV FFMPEG_VERSION=3.4.2
 
 WORKDIR /tmp/ffmpeg
 
-#add testing repositories - required for fdk-aac
+#add testing and community repositories - required for fdk-aac
 RUN echo '@testing http://nl.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
-  apk upgrade --update-cache --available
+  echo '@community http://nl.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories && \
+  echo '@edge http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
+  apk update && apk upgrade --no-cache --available
+RUN apk add --upgrade apk-tools@edge
 
 #install dependencies
 RUN apk add --update build-base curl nasm tar bzip2 \
