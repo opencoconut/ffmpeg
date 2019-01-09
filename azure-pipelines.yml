@@ -27,5 +27,5 @@ steps:
     docker tag $(imageName) $(dockerRepoId)/$(latestImage)
     docker push $(dockerRepoId)/$(taggedImage)
     docker push $(dockerRepoId)/$(latestImage)
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/releases'))
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
   displayName: 'push image to dockerhub'
