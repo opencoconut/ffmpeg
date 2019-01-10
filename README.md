@@ -1,52 +1,33 @@
 # FFmpeg Docker image
 
-Minimal FFmpeg Docker image built on Alpine Linux, a fork from the [opencoconut/ffmpeg]( https://github.com/opencoconut/ffmpeg) project.
+[![Build Status](https://dev.azure.com/pcosta-fccn/Docker%20base%20images/_apis/build/status/fccn.ffmpeg?branchName=master)](https://dev.azure.com/pcosta-fccn/Docker%20base%20images/_build/latest?definitionId=3?branchName=master)
 
-**changes:** removed openssl, added libfdk_aac, updated ffmpeg version to 3.4.2
+Minimal FFmpeg Docker image built on Alpine Linux, started as a fork from the [opencoconut/ffmpeg]( https://github.com/opencoconut/ffmpeg) project. Since version 4 it uses concepts from
+[jrottenberg/ffmpeg:4.0-scratch](https://hub.docker.com/r/jrottenberg/ffmpeg/) for multi-stage building and FFmpeg libs compilation stage.
 
 ## About
 
-FFmpeg version 3.4.2
+FFmpeg version 4.0.2 running on Alpine 3.8
 
 ```
-ffmpeg version 3.4.2 Copyright (c) 2000-2018 the FFmpeg developers
-  built with gcc 6.3.0 (Alpine 6.3.0)
-  configuration: --enable-version3 --enable-gpl --enable-nonfree --enable-small --enable-libmp3lame --enable-libfdk_aac --enable-libx264 --enable-libx265 --enable-libvpx --enable-libtheora --enable-libvorbis --enable-libopus --enable-libass --enable-libwebp --enable-librtmp --enable-postproc --enable-avresample --enable-libfreetype --disable-debug --enable-static --disable-shared
+  ffmpeg version 4.0.2 Copyright (c) 2000-2018 the FFmpeg developers
+  ffprobe version 4.0.2 Copyright (c) 2007-2018 the FFmpeg developers
 
-  configuration:
-    --enable-version3
-    --enable-gpl
-    --enable-nonfree
-    --enable-small
-    --enable-libmp3lame
-    --enable-libfdk_aac
-    --enable-libx264
-    --enable-libx265
-    --enable-libvpx
-    --enable-libtheora
-    --enable-libvorbis
-    --enable-libopus
-    --enable-libass
-    --enable-libwebp
-    --enable-librtmp
-    --enable-postproc
-    --enable-avresample
-    --enable-libfreetype
-    --disable-debug
-    --enable-static
-    --disable-shared
-  libavutil      55. 78.100 / 55. 78.100
-  libavcodec     57.107.100 / 57.107.100
-  libavformat    57. 83.100 / 57. 83.100
-  libavdevice    57. 10.100 / 57. 10.100
-  libavfilter     6.107.100 /  6.107.100
-  libavresample   3.  7.  0 /  3.  7.  0
-  libswscale      4.  8.100 /  4.  8.100
-  libswresample   2.  9.100 /  2.  9.100
-  libpostproc    54.  7.100 / 54.  7.100
+  built with gcc 6.2.1 (Alpine 6.2.1) 20160822
+  configuration: --disable-debug --disable-doc --disable-ffplay --enable-shared --enable-avresample --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-gpl --enable-libass --enable-libfreetype --enable-libvidstab --enable-libmp3lame --enable-libopenjpeg --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx265 --enable-libxvid --enable-libx264 --enable-nonfree --enable-openssl --enable-libfdk_aac --enable-libkvazaar --enable-libaom --extra-libs=-lpthread --enable-postproc --enable-small --enable-version3 --extra-cflags=-I/opt/ffmpeg/include --extra-ldflags=-L/opt/ffmpeg/lib --extra-libs=-ldl --prefix=/opt/ffmpeg
+
+  libavutil      56. 14.100 / 56. 14.100
+  libavcodec     58. 18.100 / 58. 18.100
+  libavformat    58. 12.100 / 58. 12.100
+  libavdevice    58.  3.100 / 58.  3.100
+  libavfilter     7. 16.100 /  7. 16.100
+  libavresample   4.  0.  0 /  4.  0.  0
+  libswscale      5.  1.100 /  5.  1.100
+  libswresample   3.  1.100 /  3.  1.100
+  libpostproc    55.  1.100 / 55.  1.100
 
 ```
-Image size is 129MB
+Image size is 65.8MB
 
 ## Install
 
@@ -54,23 +35,23 @@ Clone this project and build the docker image locally using the Makefile.
 ```sh
 $ git clone https://github.com/fccn/ffmpeg.git
 $ cd ffmpeg
-$ make image
+$ make build
 ```
 
-This creates a new image named *fccn/ffmpeg*. You can create the image by yourself using the following docker command:
+This creates a new image named *stvfccn/ffmpeg*. You can create the image by yourself using the following docker command:
 ```sh
 $ docker build -t <your image name>
 
 ```
-The examples below consider the image is named *fccn/ffmpeg*
+The examples below consider the image is named *stvfccn/ffmpeg*
 
 To use this Docker container like FFmpeg is installed on your machine, you can create an alias to use a Docker container from this image:
 
 To make it available for a single user, in `~/.bashrc` do:
 
 ```
-alias ffmpeg='docker run -v=`pwd`:/tmp/ffmpeg fccn/ffmpeg'
-alias ffprobe='docker run -it -v=`pwd`:/tmp/ffmpeg --entrypoint=ffprobe fccn/ffmpeg'
+alias ffmpeg='docker run -v=`pwd`:/tmp/ffmpeg stvfccn/ffmpeg'
+alias ffprobe='docker run -it -v=`pwd`:/tmp/ffmpeg --entrypoint=ffprobe stvfccn/ffmpeg'
 ```
 
 After reloading the console or calling `source ~/.bashrc`, FFmpeg can be called like:
@@ -92,10 +73,10 @@ $ make dist
 
 ## Usage
 
-Assuming that the image created was named **fccn/ffmpeg** you can encode a remote file like this:
+This image is available on docker hub as [stvfccn/ffmpeg](). To encode a remote file run:
 
 ```sh
-$ docker run fccn/ffmpeg -i http://files.coconut.co.s3.amazonaws.com/test.mp4 -f webm -c:v libvpx -c:a libvorbis - > test.webm
+$ docker run stvfccn/ffmpeg -i http://files.coconut.co.s3.amazonaws.com/test.mp4 -f webm -c:v libvpx -c:a libvorbis - > test.webm
 ```
 
 or if you enabled the aliases, like this:
@@ -107,7 +88,7 @@ $ ffmpeg -i http://files.coconut.co.s3.amazonaws.com/test.mp4 -f webm -c:v libvp
 To encode a local file, you can mount the current path on the Docker host's filesystem as a volume inside the container like this:
 
 ```sh
-$ docker run -v=`pwd`:/tmp/ffmpeg fccn/ffmpeg -i localfile.mp4 out.webm
+$ docker run -v=`pwd`:/tmp/ffmpeg stvfccn/ffmpeg -i localfile.mp4 out.webm
 ```
 
 or if you enabled the aliases:
@@ -120,6 +101,8 @@ $ ffmpeg -i localfile.mp4 out.webm
 Original Version from Bruno Celeste (http://coconut.co)
 - Twitter: @OpenCoconut,  @brunoceleste
 
+Multi-stage build adapted from [jrottenberg/ffmpeg:4.0-scratch](https://hub.docker.com/r/jrottenberg/ffmpeg/)
+
 Modification by Paulo Costa
 
 ## Contributing
@@ -129,6 +112,10 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/fccn/ffmpeg/tags).
+
+### changelog
+- 3.0.X - removed openssl, added libfdk_aac, updated FFmpeg version to 3.4.2
+- 4.0.0 - using multi-stage build with ffmpeg compilation, updated to FFmpeg 4.0.2, pushed image to docker hub
 
 ## License
 

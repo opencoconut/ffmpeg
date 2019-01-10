@@ -20,10 +20,11 @@ steps:
 - script: docker run -t $(buildImage) -buildconf
   displayName: 'validate built image'
 - script: |
+    chmod +x version.sh
     docker login -u $(dockerId) -p $(dockerPassword)
     docker tag $(buildImage) $(dockerRepoId)/$(imageName):$(./version.sh)
     docker tag $(buildImage) $(dockerRepoId)/$(imageName):latest
     docker push $(dockerRepoId)/$(imageName):$(./version.sh)
     docker push $(dockerRepoId)/$(imageName):latest
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  displayName: 'push image to dockerhub'
+displayName: 'push image to dockerhub'
