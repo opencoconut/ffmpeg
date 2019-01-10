@@ -27,4 +27,4 @@ steps:
     docker push $(dockerRepoId)/$(imageName):$(./version.sh)
     docker push $(dockerRepoId)/$(imageName):latest
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-displayName: 'push image to dockerhub'
+  displayName: 'push image to dockerhub'
