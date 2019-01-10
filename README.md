@@ -14,19 +14,52 @@ FFmpeg version 4.0.2 running on Alpine 3.8
   ffprobe version 4.0.2 Copyright (c) 2007-2018 the FFmpeg developers
 
   built with gcc 6.2.1 (Alpine 6.2.1) 20160822
-  configuration: --disable-debug --disable-doc --disable-ffplay --enable-shared --enable-avresample --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-gpl --enable-libass --enable-libfreetype --enable-libvidstab --enable-libmp3lame --enable-libopenjpeg --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx265 --enable-libxvid --enable-libx264 --enable-nonfree --enable-openssl --enable-libfdk_aac --enable-libkvazaar --enable-libaom --extra-libs=-lpthread --enable-postproc --enable-small --enable-version3 --extra-cflags=-I/opt/ffmpeg/include --extra-ldflags=-L/opt/ffmpeg/lib --extra-libs=-ldl --prefix=/opt/ffmpeg
 
-  libavutil      56. 14.100 / 56. 14.100
-  libavcodec     58. 18.100 / 58. 18.100
-  libavformat    58. 12.100 / 58. 12.100
-  libavdevice    58.  3.100 / 58.  3.100
-  libavfilter     7. 16.100 /  7. 16.100
-  libavresample   4.  0.  0 /  4.  0.  0
-  libswscale      5.  1.100 /  5.  1.100
-  libswresample   3.  1.100 /  3.  1.100
-  libpostproc    55.  1.100 / 55.  1.100
+  configuration:
+    --disable-debug
+    --disable-doc
+    --disable-ffplay
+    --enable-shared
+    --enable-avresample
+    --enable-libopencore-amrnb
+    --enable-libopencore-amrwb
+    --enable-gpl
+    --enable-libass
+    --enable-libfreetype
+    --enable-libvidstab
+    --enable-libmp3lame
+    --enable-libopenjpeg
+    --enable-libopus
+    --enable-libtheora
+    --enable-libvorbis
+    --enable-libvpx
+    --enable-libx265
+    --enable-libxvid
+    --enable-libx264
+    --enable-nonfree
+    --enable-openssl
+    --enable-libfdk_aac
+    --enable-libkvazaar
+    --enable-libaom
+    --extra-libs=-lpthread
+    --enable-postproc
+    --enable-small
+    --enable-version3
+    --extra-cflags=-I/opt/ffmpeg/include
+    --extra-ldflags=-L/opt/ffmpeg/lib
+    --extra-libs=-ldl
 
+    libavutil      56. 14.100 / 56. 14.100
+    libavcodec     58. 18.100 / 58. 18.100
+    libavformat    58. 12.100 / 58. 12.100
+    libavdevice    58.  3.100 / 58.  3.100
+    libavfilter     7. 16.100 /  7. 16.100
+    libavresample   4.  0.  0 /  4.  0.  0
+    libswscale      5.  1.100 /  5.  1.100
+    libswresample   3.  1.100 /  3.  1.100
+    libpostproc    55.  1.100 / 55.  1.100
 ```
+
 Image size is 65.8MB
 
 ## Install
@@ -73,7 +106,7 @@ $ make dist
 
 ## Usage
 
-This image is available on docker hub as [stvfccn/ffmpeg](). To encode a remote file run:
+This image is available on docker hub as [stvfccn/ffmpeg](https://hub.docker.com/r/stvfccn/ffmpeg). To encode a remote file run:
 
 ```sh
 $ docker run stvfccn/ffmpeg -i http://files.coconut.co.s3.amazonaws.com/test.mp4 -f webm -c:v libvpx -c:a libvorbis - > test.webm
