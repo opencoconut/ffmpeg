@@ -20,6 +20,7 @@ steps:
 - script: docker run -t $(buildImage) -buildconf
   displayName: 'validate built image'
 - script: |
+    chmod +x version.sh
     docker login -u $(dockerId) -p $(dockerPassword)
     docker tag $(buildImage) $(dockerRepoId)/$(imageName):$(./version.sh)
     docker tag $(buildImage) $(dockerRepoId)/$(imageName):latest
