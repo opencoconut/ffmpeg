@@ -22,16 +22,18 @@ steps:
   displayName: 'create full image'
 - script: docker run -t $(fullImage) -buildconf
   displayName: 'validate built image'
+- script: echo "##vso[task.setvariable variable=appversion;]$(cat VERSION)"
+  displayName: 'set image version'
 - script: |
     chmod +x version.sh
     docker login -u $(dockerId) -p $(dockerPassword)
-    docker tag $(buildImage) $(dockerRepoId)/$(imageName):build-$(./version.sh)
+    docker tag $(buildImage) $(dockerRepoId)/$(imageName):build-$(appversion)
     docker tag $(buildImage) $(dockerRepoId)/$(imageName):build-latest
-    docker push $(dockerRepoId)/$(imageName):build-$(./version.sh)
+    docker push $(dockerRepoId)/$(imageName):build-$(appversion)
     docker push $(dockerRepoId)/$(imageName):build-latest
-    docker tag $(fullImage) $(dockerRepoId)/$(imageName):$(./version.sh)
+    docker tag $(fullImage) $(dockerRepoId)/$(imageName):$(appversion)
     docker tag $(fullImage) $(dockerRepoId)/$(imageName):latest
-    docker push $(dockerRepoId)/$(imageName):$(./version.sh)
+    docker push $(dockerRepoId)/$(imageName):$(appversion)
     docker push $(dockerRepoId)/$(imageName):latest
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: 'push image to dockerhub'

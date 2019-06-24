@@ -7,13 +7,24 @@ Minimal FFmpeg Docker image built on Alpine Linux, started as a fork from the [o
 
 ## About
 
-FFmpeg version 4.0.2 running on Alpine 3.8
+FFmpeg version 4.1.3 running on Alpine 3.8
 
 ```
-  ffmpeg version 4.0.2 Copyright (c) 2000-2018 the FFmpeg developers
-  ffprobe version 4.0.2 Copyright (c) 2007-2018 the FFmpeg developers
-
-  built with gcc 6.2.1 (Alpine 6.2.1) 20160822
+  
+  ffmpeg version 4.1.3 Copyright (c) 2000-2019 the FFmpeg developers
+  ffprobe version 4.1.3 Copyright (c) 2007-2018 the FFmpeg developers
+  
+  built with gcc 6.4.0 (Alpine 6.4.0)
+  configuration: --disable-debug --disable-doc --disable-ffplay --enable-shared --enable-avresample --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-gpl --enable-libass --enable-libfreetype --enable-libvidstab --enable-libmp3lame --enable-libopenjpeg --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx265 --enable-libxvid --enable-libx264 --enable-nonfree --enable-openssl --enable-libfdk_aac --enable-libkvazaar --enable-libaom --extra-libs=-lpthread --enable-postproc --enable-small --enable-version3 --extra-cflags=-I/opt/ffmpeg/include --extra-ldflags=-L/opt/ffmpeg/lib --extra-libs=-ldl --prefix=/opt/ffmpeg
+  libavutil      56. 22.100 / 56. 22.100
+  libavcodec     58. 35.100 / 58. 35.100
+  libavformat    58. 20.100 / 58. 20.100
+  libavdevice    58.  5.100 / 58.  5.100
+  libavfilter     7. 40.101 /  7. 40.101
+  libavresample   4.  0.  0 /  4.  0.  0
+  libswscale      5.  3.100 /  5.  3.100
+  libswresample   3.  3.100 /  3.  3.100
+  libpostproc    55.  3.100 / 55.  3.100
 
   configuration:
     --disable-debug
@@ -48,19 +59,8 @@ FFmpeg version 4.0.2 running on Alpine 3.8
     --extra-cflags=-I/opt/ffmpeg/include
     --extra-ldflags=-L/opt/ffmpeg/lib
     --extra-libs=-ldl
-
-    libavutil      56. 14.100 / 56. 14.100
-    libavcodec     58. 18.100 / 58. 18.100
-    libavformat    58. 12.100 / 58. 12.100
-    libavdevice    58.  3.100 / 58.  3.100
-    libavfilter     7. 16.100 /  7. 16.100
-    libavresample   4.  0.  0 /  4.  0.  0
-    libswscale      5.  1.100 /  5.  1.100
-    libswresample   3.  1.100 /  3.  1.100
-    libpostproc    55.  1.100 / 55.  1.100
+    --prefix=/opt/ffmpeg
 ```
-
-Image size is 65.8MB
 
 ## Install
 
@@ -128,6 +128,15 @@ or if you enabled the aliases:
 
 ```sh
 $ ffmpeg -i localfile.mp4 out.webm
+```
+
+### Build image
+
+A build version of this image is also available on docker hub under the *:build-{version}* or *:build-latest* tags. You can use this image to copy the FFMpeg libs and binaries to your images by adding the following line to your Dockerfile:
+
+```
+COPY --from stvfccn/ffmpeg:build-latest /
+
 ```
 
 ## Author
