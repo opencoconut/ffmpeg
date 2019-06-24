@@ -12,18 +12,25 @@ pool:
 
 variables:
   imageName: 'ffmpeg'
-  buildImage: $(imageName):$(build.buildId)
+  buildImage: $(imageName):build-$(build.buildId)
+  fullImage: $(imageName):$(build.buildId)
 
 steps:
-- script: docker build -f Dockerfile -t $(buildImage) .
-  displayName: 'build image'
-- script: docker run -t $(buildImage) -buildconf
+- script: docker build --target=build -f Dockerfile -t $(buildImage) .
+  displayName: 'create build image'
+- script: docker build -f Dockerfile -t $(fullImage) .
+  displayName: 'create full image'
+- script: docker run -t $(fullImage) -buildconf
   displayName: 'validate built image'
 - script: |
     chmod +x version.sh
     docker login -u $(dockerId) -p $(dockerPassword)
-    docker tag $(buildImage) $(dockerRepoId)/$(imageName):$(./version.sh)
-    docker tag $(buildImage) $(dockerRepoId)/$(imageName):latest
+    docker tag $(buildImage) $(dockerRepoId)/$(imageName):build-$(./version.sh)
+    docker tag $(buildImage) $(dockerRepoId)/$(imageName):build-latest
+    docker push $(dockerRepoId)/$(imageName):build-$(./version.sh)
+    docker push $(dockerRepoId)/$(imageName):build-latest
+    docker tag $(fullImage) $(dockerRepoId)/$(imageName):$(./version.sh)
+    docker tag $(fullImage) $(dockerRepoId)/$(imageName):latest
     docker push $(dockerRepoId)/$(imageName):$(./version.sh)
     docker push $(dockerRepoId)/$(imageName):latest
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))

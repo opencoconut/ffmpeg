@@ -20,8 +20,11 @@ help: ## This help.
 
 # DOCKER TASKS
 # Build the container
-build: ## Build the container
+image: ## Build the container
 	docker build -t $(APP_NAME) --build-arg ffmpeg_version=$(FFMPEG_VERSION) .
+
+src-image:
+	docker build -t $(APP_NAME) --target=build --build-arg ffmpeg_version=$(FFMPEG_VERSION) .
 
 build-nc: ## Build the container without caching
 	docker build --no-cache -t $(APP_NAME) --build-arg ffmpeg_version=$(FFMPEG_VERSION) .

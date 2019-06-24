@@ -3,7 +3,7 @@
 # - based on jrottenberg/ffmpeg:4.0-scratch image - https://hub.docker.com/r/jrottenberg/ffmpeg/
 # - using alpine 3.8
 #------
-FROM        alpine:3.5 AS build
+FROM        alpine:3.8 AS build
 
 WORKDIR     /tmp/workdir
 
@@ -12,9 +12,9 @@ ARG        LD_LIBRARY_PATH=/opt/ffmpeg/lib
 ARG        PREFIX=/opt/ffmpeg
 ARG        MAKEFLAGS="-j2"
 
-ENV         FFMPEG_VERSION=4.0.2     \
+ENV         FFMPEG_VERSION=4.1.3     \
             FDKAAC_VERSION=0.1.5      \
-            LAME_VERSION=3.99.5       \
+            LAME_VERSION=3.100        \
             LIBASS_VERSION=0.13.7     \
             OGG_VERSION=1.3.2         \
             OPENCOREAMR_VERSION=0.1.5 \
@@ -22,7 +22,7 @@ ENV         FFMPEG_VERSION=4.0.2     \
             OPENJPEG_VERSION=2.1.2    \
             THEORA_VERSION=1.1.1      \
             VORBIS_VERSION=1.3.5      \
-            VPX_VERSION=1.7.0         \
+            VPX_VERSION=1.8.0         \
             X264_VERSION=20170226-2245-stable \
             X265_VERSION=2.3          \
             XVID_VERSION=1.3.4        \
@@ -58,6 +58,7 @@ RUN     buildDeps="autoconf \
                    file \
                    g++ \
                    gcc \
+                   git \
                    gperf \
                    libtool \
                    make \
@@ -65,8 +66,14 @@ RUN     buildDeps="autoconf \
                    openssl-dev \
                    tar \
                    yasm \
-                   zlib-dev" && \
-        apk  add --update ${buildDeps} libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0
+                   fontconfig-dev \
+				           freetype-dev \
+                   zlib-dev" \
+    &&  apk  add --update ${buildDeps} libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0 \
+		&& mkdir -p /tmp/patches
+
+## add patches
+COPY ./patches /tmp/patches
 
 ## opencore-amr https://sourceforge.net/projects/opencore-amr/
 RUN \
@@ -148,6 +155,11 @@ RUN \
         curl -sLO http://downloads.xiph.org/releases/theora/libtheora-${THEORA_VERSION}.tar.gz && \
         echo ${THEORA_SHA256SUM} | sha256sum --check && \
         tar -zx --strip-components=1 -f libtheora-${THEORA_VERSION}.tar.gz && \
+### apply patch
+        echo "patching theora lib..." && \
+		    cp /tmp/patches/png2theora.patch ${DIR}/examples/png2theora.patch && \
+		    cd ${DIR}/examples && patch < png2theora.patch && cd ${DIR} && \
+		    echo "finished patching, compiling lib" && \
         ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
         make && \
         make install && \
@@ -212,17 +224,17 @@ RUN \
         make install && \
         rm -rf ${DIR}
 ## freetype https://www.freetype.org/
-RUN  \
-        DIR=/tmp/freetype && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO http://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.gz && \
-        echo ${FREETYPE_SHA256SUM} | sha256sum --check && \
-        tar -zx --strip-components=1 -f freetype-${FREETYPE_VERSION}.tar.gz && \
-        ./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+#RUN  \
+#        DIR=/tmp/freetype && \
+#        mkdir -p ${DIR} && \
+#        cd ${DIR} && \
+#        curl -sLO http://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.gz && \
+#        echo ${FREETYPE_SHA256SUM} | sha256sum --check && \
+#        tar -zx --strip-components=1 -f freetype-${FREETYPE_VERSION}.tar.gz && \
+#        ./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
+#        make && \
+#        make install && \
+#        rm -rf ${DIR}
 ## libvstab https://github.com/georgmartius/vid.stab
 RUN  \
         DIR=/tmp/vid.stab && \
@@ -251,16 +263,16 @@ RUN  \
         make install && \
         rm -rf ${DIR}
 ## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
-RUN  \
-        DIR=/tmp/fontconfig && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://www.freedesktop.org/software/fontconfig/release/fontconfig-${FONTCONFIG_VERSION}.tar.bz2 &&\
-        tar -jx --strip-components=1 -f fontconfig-${FONTCONFIG_VERSION}.tar.bz2 && \
-        ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
+#RUN  \
+#        DIR=/tmp/fontconfig && \
+#        mkdir -p ${DIR} && \
+#        cd ${DIR} && \
+#        curl -sLO https://www.freedesktop.org/software/fontconfig/release/fontconfig-${FONTCONFIG_VERSION}.tar.bz2 &&\
+#        tar -jx --strip-components=1 -f fontconfig-${FONTCONFIG_VERSION}.tar.bz2 && \
+#        ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
+#        make && \
+#        make install && \
+#        rm -rf ${DIR}
 ## libass https://github.com/libass/libass
 RUN  \
         DIR=/tmp/libass && \
@@ -288,18 +300,16 @@ RUN \
         rm -rf ${DIR}
 
 RUN \
-        dir=/tmp/aom ; \
-        mkdir -p ${dir} ; \
-        cd ${dir} ; \
-        curl -sLO https://aomedia.googlesource.com/aom/+archive/${AOM_VERSION}.tar.gz ; \
-        tar -zx -f ${AOM_VERSION}.tar.gz ; \
+        DIR=/tmp/aom && \
+        git clone --branch ${AOM_VERSION} --depth 1 https://aomedia.googlesource.com/aom ${DIR} ; \
+        cd ${DIR} ; \
         rm -rf CMakeCache.txt CMakeFiles ; \
         mkdir -p ./aom_build ; \
         cd ./aom_build ; \
         cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DBUILD_SHARED_LIBS=1 ..; \
         make ; \
         make install ; \
-        rm -rf ${dir}
+        rm -rf ${DIR}
 
 ## ffmpeg https://ffmpeg.org/
 RUN  \
